@@ -1,13 +1,10 @@
 package com.taskmanager.springtaskmanager.Repository;
 
-import com.taskmanager.springtaskmanager.Configuration.DatabaseConfig;
 import com.taskmanager.springtaskmanager.Model.Task;
-import org.hibernate.annotations.processing.SQL;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import java.sql.*;
 import java.util.ArrayList;
 
 public class TaskRepositoryImpl implements TaskRepository {
@@ -56,11 +53,31 @@ public class TaskRepositoryImpl implements TaskRepository {
 
     @Override
     public void update(Task task) {
-
+        String sqlCommand = "UPDATE tasks SET title = ?, description = ?, due_date = ?, status = ? WHERE id = ?";
+        try{
+            jdbcTemplate.update(
+                    sqlCommand,
+                    task.getTitle(),
+                    task.getDescription(),
+                    task.getDueDate(),
+                    task.isComplete(),
+                    task.getId()
+            );
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
     public void delete(Long id) {
-
+        String sqlCommand = "DELETE FROM tasks WHERE id = ?";
+        try{
+            jdbcTemplate.update(
+                    sqlCommand,
+                    id
+            );
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
