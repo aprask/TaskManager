@@ -21,7 +21,7 @@ public class TaskService {
     }
 
     public Task getTaskById(Long id) {
-        if (id < 0) throw new RuntimeException("Not an appropriate value");
+        if (id < 0 || id > taskRepository.retrieveAllTasks().size()) throw new RuntimeException("Not an appropriate value");
         return taskRepository.findTaskByID(id);
     }
 
@@ -37,6 +37,7 @@ public class TaskService {
 
     public void deleteTask(Long id) {
         if (id < 0) throw new RuntimeException("Not an appropriate value");
+        else if(getTaskById(id) == null) throw new NullPointerException("Cannot find user");
         taskRepository.delete(id);
     }
 }
