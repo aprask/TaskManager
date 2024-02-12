@@ -1,19 +1,20 @@
 package com.taskmanager.springtaskmanager.Repository;
 
-import com.taskmanager.springtaskmanager.Model.Task;
 import com.taskmanager.springtaskmanager.Model.User;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Repository;
 
+import javax.sql.DataSource;
 import java.util.ArrayList;
 
+@Repository
 public class UserRepositoryImpl implements UserRepository {
     private final JdbcTemplate jdbcTemplate;
-    public UserRepositoryImpl(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
+    public UserRepositoryImpl(DataSource dataSource) {
+        this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
-
     @Override
     public User findUserByID(Long id) {
         String sqlCommand = "SELECT * FROM users WHERE id = ?";
@@ -23,7 +24,6 @@ public class UserRepositoryImpl implements UserRepository {
             throw new RuntimeException(e);
         }
     }
-
     @Override
     public ArrayList<User> retrieveAllUsers() {
         String sqlCommand = "SELECT * FROM users";
@@ -33,7 +33,6 @@ public class UserRepositoryImpl implements UserRepository {
             throw new RuntimeException(e);
         }
     }
-
     @Override
     public void save(User user) {
         String sqlCommand = "INSERT INTO users (id, username, password) " +
@@ -50,7 +49,6 @@ public class UserRepositoryImpl implements UserRepository {
         }
         jdbcTemplate.execute(sqlCommand);
     }
-
     @Override
     public void update(User user) {
         String sqlCommand = "UPDATE users SET id = ?, username = ?, password = ?";
@@ -65,7 +63,6 @@ public class UserRepositoryImpl implements UserRepository {
             throw new RuntimeException(e);
         }
     }
-
     @Override
     public void delete(Long id) {
         String sqlCommand = "DELETE FROM users WHERE id = ?";
@@ -77,6 +74,5 @@ public class UserRepositoryImpl implements UserRepository {
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
         }
-
     }
 }

@@ -4,15 +4,17 @@ import com.taskmanager.springtaskmanager.Model.Task;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Repository;
 
+import javax.sql.DataSource;
 import java.util.ArrayList;
 
+@Repository
 public class TaskRepositoryImpl implements TaskRepository {
     private final JdbcTemplate jdbcTemplate;
-    public TaskRepositoryImpl(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
+    public TaskRepositoryImpl(DataSource dataSource) {
+        this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
-
     @Override
     public Task findTaskByID(Long id) {
         String sqlCommand = "SELECT * FROM tasks WHERE id = ?";
@@ -22,7 +24,6 @@ public class TaskRepositoryImpl implements TaskRepository {
             throw new RuntimeException(e);
         }
     }
-
     @Override
     public ArrayList<Task> retrieveAllTasks() {
         String sqlCommand = "SELECT * FROM tasks";
@@ -32,7 +33,6 @@ public class TaskRepositoryImpl implements TaskRepository {
             throw new RuntimeException(e);
         }
     }
-
     @Override
     public void save(Task task) {
         String sqlCommand = "INSERT INTO tasks (id, title, description, due_date, status) " +
@@ -50,7 +50,6 @@ public class TaskRepositoryImpl implements TaskRepository {
         }
         jdbcTemplate.execute(sqlCommand);
     }
-
     @Override
     public void update(Task task) {
         String sqlCommand = "UPDATE tasks SET title = ?, description = ?, due_date = ?, status = ? WHERE id = ?";
@@ -67,7 +66,6 @@ public class TaskRepositoryImpl implements TaskRepository {
             throw new RuntimeException(e);
         }
     }
-
     @Override
     public void delete(Long id) {
         String sqlCommand = "DELETE FROM tasks WHERE id = ?";
